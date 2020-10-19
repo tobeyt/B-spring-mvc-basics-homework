@@ -20,8 +20,8 @@ public class UserRepository {
         users.add(user);
     }
 
-    private Optional<User> findUserByUserName(String username) {
-        return users.stream().filter(cur -> cur.getUsername().equals(username)).findAny();
+    public Optional<User> findUserByUserName(String username) {
+        return users.stream().filter(cur -> cur.getUsername().equals(username)).findFirst();
     }
 
     private Integer getUserSize() {
