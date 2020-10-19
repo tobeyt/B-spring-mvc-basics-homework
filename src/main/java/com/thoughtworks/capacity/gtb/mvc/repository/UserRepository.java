@@ -13,10 +13,6 @@ public class UserRepository {
 
     public void register(User user) {
         user.setId(getUserSize());
-        Optional<User> userOptional = findUserByUserName(user.getUsername());
-        if (userOptional.isPresent()) {
-            // Todo
-        }
         users.add(user);
     }
 

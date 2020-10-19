@@ -1,6 +1,8 @@
 package com.thoughtworks.capacity.gtb.mvc.service;
 
 import com.thoughtworks.capacity.gtb.mvc.dto.User;
+import com.thoughtworks.capacity.gtb.mvc.exception.UserNameAlreadyExistsException;
+import com.thoughtworks.capacity.gtb.mvc.exception.UserNameOrPassWordInvalidException;
 import com.thoughtworks.capacity.gtb.mvc.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,18 +17,21 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public void register(User user) {
+    public void register(User user) throws UserNameAlreadyExistsException {
+        if(userRepository.findUserByUserName(user.getUsername()).isPresent()){
+            throw new UserNameAlreadyExistsException();
+        }
         userRepository.register(user);
     }
 
-    public User login(String username, String password) {
+    public User login(String username, String password) throws UserNameOrPassWordInvalidException {
         Optional<User> userOptional = userRepository.findUserByUserName(username);
         if (!userOptional.isPresent()) {
-            // Todo
+            throw new UserNameOrPassWordInvalidException();
         }
         User user = userOptional.get();
         if(!user.getPassword().equals(password)){
-            // Todo
+            throw new UserNameOrPassWordInvalidException();
         }
         return user;
     }
