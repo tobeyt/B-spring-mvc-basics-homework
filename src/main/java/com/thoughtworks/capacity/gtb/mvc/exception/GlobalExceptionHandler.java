@@ -6,11 +6,25 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResult> exceptionHandler(MethodArgumentNotValidException exception){
         String message = exception.getBindingResult().getFieldError().getDefaultMessage();
+        ErrorResult errorResult = new ErrorResult(message);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResult);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResult> handle(ConstraintViolationException ex) {
+        String message = "";
+        for (ConstraintViolation<?> constraint : ex.getConstraintViolations()) {
+            message = constraint.getMessage();
+            break;
+        }
         ErrorResult errorResult = new ErrorResult(message);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResult);
     }
